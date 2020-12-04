@@ -3,6 +3,7 @@
 ## Project Highlights 
 
 
+
 ## Project Object
 
 The company has a large portfolio of beer products distributed to retailers through agencies. There are thousands of unique agency-SKU/product combinations. In order to plan its production and distribution as well as help agencies with their planning, it is important for the company to have an accurate estimate of monthly demand at SKU level for each agency.
@@ -39,12 +40,13 @@ The main data cleaning I did:
 * transformed the tabular dataset to dictionary format
 * transformed the dictionary format to json lines format which is then uploaded to S3 bucket
 
-After cleaning and transforming data to jsonlines, for example, the first 2 lines in test set looks like:
+After cleaning and transforming data to jsonlines, for example, the first 2 lines in test set look like:
 `{"start": "2013-01-01 00:00:00", "target": [80.676, 98.064, 133.704, ..., 37.908, 35.532], "cat": [0, 0], "dynamic_feat": [[1033.432731, 1065.417195, 1101.133633, ..., 1341.864851, 1390.112272], [108.067269, 76.08280500000001, 78.212187, ..., 281.01264199999997, 273.68522]]}`
 
 `{"start": "2013-01-01 00:00:00", "target": [78.408, 99.25200000000001, 137.268, ..., 24.191999999999997, 17.172], "cat": [0, 1], "dynamic_feat": [[969.1862085000001, 996.9507620999, 1061.272227, ..., 1351.3808589999999, 1412.680031], [104.9715905, 77.99408290000001, 67.71759399, ..., 321.32673, 284.895441]]}`
 
-## EDA
+## EDA using Tableau
+I made an interactive dashboard regarding product demand, on-sale price and promotion trend over 2013-2017. It can be found in Tableau Public under my profile: https://public.tableau.com/profile/shelley8110#!/vizhome/productdemandDashboard/InteractiveDashboard?publish=yes
 
 ## Model Training and Fine-tuning
 
@@ -99,7 +101,8 @@ I invoked the model endpoint deployed by Amazon SageMaker using API Gateway and 
 How it works: starting from the client side, a client script calls an Amazon API Gateway API action and passes parameter values. API Gateway is a layer that provides API to the client. In addition, it seals the backend so that AWS Lambda stays and executes in a protected private network. API Gateway passes the parameter values to the Lambda function. The Lambda function parses the value and sends it to the SageMaker model endpoint. The model performs the prediction and returns the predicted value to AWS Lambda. The Lambda function parses the returned value and sends it back to API Gateway. API Gateway responds to the client with that value.
 
 
-## Code and Resources 
+
+## References
 
 **Python Version:** 3.7  
 **Packages:** pandas, numpy, matplotlib,flask, json  
