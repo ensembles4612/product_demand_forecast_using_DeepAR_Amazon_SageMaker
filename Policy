@@ -1,0 +1,13 @@
+# include the following policy, which gives Lambda function permission to invoke a model endpoint.
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": "sagemaker:InvokeEndpoint",
+            "Resource": "*"
+        }
+    ]
+}
