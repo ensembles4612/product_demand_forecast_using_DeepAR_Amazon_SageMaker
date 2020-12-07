@@ -1,8 +1,11 @@
-# Product Demand Forecast Using DeepAR Algorithm in SageMaker AWS
+# Product Demand Forecast Using DeepAR as Endpoint deployed with API Gateway and AWS Lambda in SageMaker
 
 ## Project Highlights 
 
-
+* predicted monthly volume demand(hectoliters) for 350 Agency-SKU combination beer products simultaneously based on not only their own historical data but also other impactful features such as price and promotions using DeepAR in SageMaker AWS
+* trained and fine-tuned the DeepAR models using auto-tuning job, a built-in function in Sagemaker, and obtained test error(RMSE)=760
+* deployed the model as an endpoint and invoked it using API Gateway and AWS Lambda to make predictions on https://wol03vnof2.execute-api.us-east-2.amazonaws.com/beta (deleted to stop billing)
+* Forecasted with a cold start: making predictions for unseen Agency-SKU combinations 
 
 ## Project Object
 
@@ -14,6 +17,15 @@ Our purpose is to achieve the following using DeepAR algorithm:
 * handling cold start problems, which is to forecast volume demand for new Agency-SKU combinations that we don't have any data on.
 
 ## Why use Amazon Sagemaker DeepAR Algorithm
+
+DeepAR, a methodology for producing accurate probabilistic forecasts based on training autoregressive recurrent networks, which learns such a global model from historical data of all time series in the data set. The method builds upon previous research on deep learning for time series data, and tailors a similar LSTM-based recurrent neural network architecture to the probabilistic forecasting problem.
+
+In addition to providing better forecast accuracy than previous methods, DeepAR has a number key advantages compared to classical approaches and other global
+methods: 
+* As DeepAR learns seasonal behavior and dependencies on given covariates across time series, minimal manual feature engineering is needed to capture complex, group-dependent behavior; 
+* DeepAR makes probabilistic forecasts in the form of Monte Carlo samples that can be used to compute consistent quantile estimates for all sub-ranges in the prediction horizon; DeepAR also produces both point forecasts (e.g., the amount of sneakers sold in a week is X) and probabilistic forecasts (e.g., the amount of sneakers sold in a week is between X and Y with Z% probability). 
+* By learning from similar items, DeepAR is able to provide forecasts for items with little or no history at all, a case where traditional single-item forecasting methods fail. Traditional methods such as ARIMA or ES rely solely on the historical data of an individual time series, and as such they are typically less accurate in the cold start case.
+* Our approach does not assume Gaussian noise, but can incorporate a wide range of likelihood functions, allowing the user to choose one that is appropriate for the statistical properties of the data. Especially in the demand forecasting domain, one is often faced with highly erratic, intermittent or bursty data which violate core assumptions of many classical techniques, such as Gaussian errors, stationarity, or homoscedasticity of the time series.
 
 ## Sagemaker Instance Setup
 
@@ -46,11 +58,11 @@ After cleaning and transforming data to jsonlines, for example, the first 2 line
 `{"start": "2013-01-01 00:00:00", "target": [78.408, 99.25200000000001, 137.268, ..., 24.191999999999997, 17.172], "cat": [0, 1], "dynamic_feat": [[969.1862085000001, 996.9507620999, 1061.272227, ..., 1351.3808589999999, 1412.680031], [104.9715905, 77.99408290000001, 67.71759399, ..., 321.32673, 284.895441]]}`
 
 ## EDA using Tableau
-I made an interactive dashboard regarding product demand, on-sale price and promotion trend over 2013-2017. It can be found in Tableau Public under my profile: https://public.tableau.com/profile/shelley8110#!/vizhome/productdemandDashboard/InteractiveDashboard?publish=yes
+I made an interactive dashboard for data visualization regarding product demand, on-sale price and promotion trend over 2013-2017. It can be found in Tableau Public under my profile: https://public.tableau.com/profile/shelley8110#!/vizhome/productdemandDashboard/InteractiveDashboard?publish=yes
 
 ## Model Training and Fine-tuning
 
-1. After the initial training with specific hyperparameter setting below, I obtained test RMSE: <loss>=759.711203642
+1. After the initial training with specific hyperparameter setting below, I obtained test RMSE：759.711203642
 ```md  
   hyperparameters = {
     "time_freq":"M" ,
@@ -100,14 +112,11 @@ I invoked the model endpoint deployed by Amazon SageMaker using API Gateway and 
 
 How it works: starting from the client side, a client script calls an Amazon API Gateway API action and passes parameter values. API Gateway is a layer that provides API to the client. In addition, it seals the backend so that AWS Lambda stays and executes in a protected private network. API Gateway passes the parameter values to the Lambda function. The Lambda function parses the value and sends it to the SageMaker model endpoint. The model performs the prediction and returns the predicted value to AWS Lambda. The Lambda function parses the returned value and sends it back to API Gateway. API Gateway responds to the client with that value.
 
+## Code and References
 
-
-## References
-
-**Python Version:** 3.7  
-**Packages:** pandas, numpy, matplotlib,flask, json  
-**Sagemaker Endpiont Deployment reference:** https://aws.amazon.com/blogs/machine-learning/call-an-amazon-sagemaker-model-endpoint-using-amazon-api-gateway-and-aws-lambda/ 
-**Dataset Source:** https://www.kaggle.com/utathya/future-volume-prediction
-**DeepAR Paper:** https://arxiv.org/pdf/1704.04110v3.pdf
-**Other DeepAR Article:** https://aws.amazon.com/blogs/machine-learning/now-available-in-amazon-sagemaker-deepar-algorithm-for-more-accurate-time-series-forecasting/
+* **Environment setup:** AWS -- SageMaker -- Launch an instance -- Create AWS SDK for Python (Boto3)  
+* **Sagemaker Endpiont Deployment reference:** https://aws.amazon.com/blogs/machine-learning/call-an-amazon-sagemaker-model-endpoint-using-amazon-api-gateway-and-aws-lambda/ 
+* **Dataset Source:** https://www.kaggle.com/utathya/future-volume-prediction
+* **DeepAR Paper:** https://arxiv.org/pdf/1704.04110v3.pdf
+* **Other DeepAR Article:** https://aws.amazon.com/blogs/machine-learning/now-available-in-amazon-sagemaker-deepar-algorithm-for-more-accurate-time-series-forecasting/
 
