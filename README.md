@@ -16,6 +16,15 @@ Our purpose is to achieve the following using DeepAR algorithm:
 * predicting the monthly demand volume(hectoliters) for each Agency-SKU combination (350 Agency-SKU combinations in total) for year 2018 based on data from 2013-2017.
 * handling cold start problems, which is to forecast volume demand for new Agency-SKU combinations that we don't have any data on.
 
+## Code and References
+
+* **Environment setup:** AWS -- SageMaker -- Launch an instance (creating IAM role and connecting to GitHub repo) -- Create AWS SDK for Python (Boto3) -- Create more Jupyter notebooks when needed (managed by Jupyter Lab)
+* **Language:** Python 3
+* **Sagemaker Endpiont Deployment reference:** https://aws.amazon.com/blogs/machine-learning/call-an-amazon-sagemaker-model-endpoint-using-amazon-api-gateway-and-aws-lambda/ 
+* **Dataset Source:** https://www.kaggle.com/utathya/future-volume-prediction
+* **DeepAR Paper:** https://arxiv.org/pdf/1704.04110v3.pdf
+* **DeepAR Article:** https://aws.amazon.com/blogs/machine-learning/now-available-in-amazon-sagemaker-deepar-algorithm-for-more-accurate-time-series-forecasting/
+
 ## Why use Amazon Sagemaker DeepAR Algorithm
 
 DeepAR, a methodology for producing accurate probabilistic forecasts based on training autoregressive recurrent networks, which learns such a global model from historical data of all time series in the data set. The method builds upon previous research on deep learning for time series data, and tailors a similar LSTM-based recurrent neural network architecture to the probabilistic forecasting problem.
@@ -58,7 +67,11 @@ After cleaning and transforming data to jsonlines, for example, the first 2 line
 `{"start": "2013-01-01 00:00:00", "target": [78.408, 99.25200000000001, 137.268, ..., 24.191999999999997, 17.172], "cat": [0, 1], "dynamic_feat": [[969.1862085000001, 996.9507620999, 1061.272227, ..., 1351.3808589999999, 1412.680031], [104.9715905, 77.99408290000001, 67.71759399, ..., 321.32673, 284.895441]]}`
 
 ## EDA using Tableau
-I made an interactive dashboard for data visualization regarding product demand, on-sale price and promotion trend over 2013-2017. It can be found in Tableau Public under my profile: https://public.tableau.com/profile/shelley8110#!/vizhome/productdemandDashboard/InteractiveDashboard?publish=yes
+I made an interactive dashboard for data visualization regarding product demand, on-sale price and promotion trend over 2013-2017. It can be found in Tableau Public under my profile: https://public.tableau.com/profile/shelley8110#!/vizhome/productdemandDashboard/InteractiveDashboard?publish=yes 
+
+Below is a screenshot:
+
+![alt text](https://github.com/ensembles4612/product_demand_forecast_using_DeepAR_Amazon_SageMaker/blob/master/Tableau-dashboard-screenshot.png)
 
 ## Model Training and Fine-tuning
 
@@ -108,18 +121,8 @@ I obtained predicted 10% and 90% quantiles using batch transform, so I could add
 
 ## Productionization
 
-I invoked the model endpoint deployed by Amazon SageMaker using API Gateway and AWS Lambda. For testing purposes, I used Postman. Below is the screenshot:
+I invoked the model endpoint deployed by Amazon SageMaker using API Gateway and AWS Lambda. For testing purposes, I used Postman. Below is a screenshot:
 
 ![alt text](https://github.com/ensembles4612/product_demand_forecast_using_DeepAR_Amazon_SageMaker/blob/master/test-on-postman.png)
 
-
 How it works: starting from the client side, a client script calls an Amazon API Gateway and passes parameter values. API Gateway is a layer that provides API to the client. In addition, it seals the backend so that AWS Lambda stays and executes in a protected private network. API Gateway passes the parameter values to the Lambda function. The Lambda function parses the value and sends it to the SageMaker model endpoint. The model performs the prediction and returns the predicted value to AWS Lambda. The Lambda function parses the returned value and sends it back to API Gateway. API Gateway responds to the client with that value.
-
-## Code and References
-
-* **Environment setup:** AWS -- SageMaker -- Launch an instance -- Create AWS SDK for Python (Boto3)  
-* **Sagemaker Endpiont Deployment reference:** https://aws.amazon.com/blogs/machine-learning/call-an-amazon-sagemaker-model-endpoint-using-amazon-api-gateway-and-aws-lambda/ 
-* **Dataset Source:** https://www.kaggle.com/utathya/future-volume-prediction
-* **DeepAR Paper:** https://arxiv.org/pdf/1704.04110v3.pdf
-* **Other DeepAR Article:** https://aws.amazon.com/blogs/machine-learning/now-available-in-amazon-sagemaker-deepar-algorithm-for-more-accurate-time-series-forecasting/
-
